@@ -30,15 +30,22 @@ This is a JAVA based chat application, which would work to the hosts connected t
 	    <artifactId>javafx-controls</artifactId>
 	    <version>12</version>
 	</dependency>
+	<dependency>
+		<groupId>org.openjfx</groupId>
+		<artifactId>javafx-fxml</artifactId>
+		<version>12</version>
+	</dependency>
 	-->    	
 	```
 	4. Delete the file module-info, and set up jdk/jre complaince to the preferred installed version.
+	5. Project > Clean > Run project
 
 - If JDK > 1.8, which is 9 or higher versions, please follow the below steps
 	1. In your IDE, File > Import > Existing Maven Projects > Root_Dir (containing pom.xml) > Next > Finish
 	2. After maven downloads the dependecies, try maven run, then a window should appear
 	3. If you have more trouble, then try searching in [StackOverflow](https://stackoverflow.com/questions/51478675/error-javafx-runtime-components-are-missing-and-are-required-to-run-this-appli) for more support based on your OS
-	4. Edit the Run Configuration, based on the path of your JavaFX SDK	
+	4. Edit the Run Configuration, based on the path of your JavaFX SDK, check Main class as `com.frankie_chat.App`
+	5. If module errors occurs then please add VM args as, else not required
 	```
 	--module-path /Library/Java/JavaVirtualMachines/javafx-sdk-11.0.2/lib
 	--add-modules=javafx.controls,javafx.fxml,javafx.base,javafx.graphics,javafx.web

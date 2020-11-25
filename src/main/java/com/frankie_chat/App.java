@@ -1,27 +1,19 @@
 package com.frankie_chat;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.text.TextFlow;
+import java.io.File;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * JavaFX App 
@@ -65,9 +57,11 @@ public class App extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			VBox root = (VBox) FXMLLoader.load(getClass().getResource("MainUI.fxml"));
+			URL url_fxml = new File("src/main/java/com/frankie_chat/MainUI.fxml").toURI().toURL();
+			VBox root = (VBox) FXMLLoader.load(url_fxml);
 			Scene scene = new Scene(root, 1000, 700);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			URL url_css = new File("src/main/java/com/frankie_chat/application.css").toURI().toURL();
+			scene.getStylesheets().add(url_css.toExternalForm());
 			setApplicationIcon(primaryStage);
 			primaryStage.setTitle(" Frankie_Chat : Anonymous chat communicator");
 			primaryStage.setScene(scene);
@@ -84,8 +78,8 @@ public class App extends Application {
 	public void setApplicationIcon(Stage primaryStage) {
 		try {
 			// image attribution "Icon made by Pixel perfect from www.flaticon.com"
-			String appIconPath = "app_icon.png";
-			Image image = new Image(getClass().getResource(appIconPath).toExternalForm());
+			URL url_icon = new File("src/main/java/com/frankie_chat/app_icon.png").toURI().toURL();
+			Image image = new Image(url_icon.toExternalForm());
 			primaryStage.getIcons().add(image);
 		} catch (Exception e) {
 			Logger.getLogger(App.class.getSimpleName()).log(Level.SEVERE, " setApplicationIcon ::" + e.getMessage());
