@@ -19,8 +19,10 @@ This is a JAVA based chat application, which would work to the hosts connected t
 
 - If JDK <= 1.8, then there is no support for maven java fx, so you can tweak some stuff and work around, but the advantage in JDK 1.8 has inbuilt JavaFX sdk, so no need to again setup.
 	1. In eclipse or preferred IDE try installing JavaFX plugin through
-		- Install new software, Name : e(fx)clipse, Site : http://download.eclipse.org/efxclipse/updates-released/3.6.0/
-		- or Install via Eclipse Marketplace by searching e(fx)clipse
+		- Install new software > 
+			- Name : e(fx)clipse
+			- Site : http://download.eclipse.org/efxclipse/updates-released/3.6.0/
+		- Or Install via Eclipse Marketplace by searching e(fx)clipse
 	2. In your IDE, File > Import > Existing Maven Projects > Root_Dir (containing pom.xml) > Next > Finish
 	3. Since JDK <=1.8 has JavaFX preinstalled, try commenting the maven dependency "org.openjfx", so as to prevent duplication class errors
 	```
@@ -45,7 +47,9 @@ This is a JAVA based chat application, which would work to the hosts connected t
 	2. After maven downloads the dependecies, try maven run, then a window should appear
 	3. If you have more trouble, then try searching in [StackOverflow](https://stackoverflow.com/questions/51478675/error-javafx-runtime-components-are-missing-and-are-required-to-run-this-appli) for more support based on your OS
 	4. Edit the Run Configuration, based on the path of your JavaFX SDK, check Main class as `com.frankie_chat.App`
-	5. If module errors occurs then please add VM args as, else not required
+	5. If module errors occurs
+	`Error: JavaFX runtime components are missing, and are required to run this application`
+	then please add VM args as below, else not required, replace with your [JavaFx_SDK_PATH](https://gluonhq.com/products/javafx/)
 	```
 	--module-path /Library/Java/JavaVirtualMachines/javafx-sdk-11.0.2/lib
 	--add-modules=javafx.controls,javafx.fxml,javafx.base,javafx.graphics,javafx.web
