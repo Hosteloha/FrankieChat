@@ -24,13 +24,13 @@ This is a JAVA based chat application, which would work to the hosts connected t
 	2. In your IDE, File > Import > Existing Maven Projects > Root_Dir (containing pom.xml) > Next > Finish
 	3. Since JDK <=1.8 has JavaFX preinstalled, try commenting the maven dependency "org.openjfx", so as to prevent duplication class errors
 	```
-			<!--    
-			<dependency>
-	            <groupId>org.openjfx</groupId>
-	            <artifactId>javafx-controls</artifactId>
-	            <version>12</version>
-	    	</dependency>
-	    	-->    	
+	<!--    
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-controls</artifactId>
+	    <version>12</version>
+	</dependency>
+	-->    	
 	```
 	4. Delete the file module-info, and set up jdk/jre complaince to the preferred installed version.
 
