@@ -1,21 +1,49 @@
 # FrankieChat
-# MAC Setup
--  File>Settings>Build, Execution, Deployment>Build Tools>Gradle
-- Choose 14 
-- If not install then install brew cask install adoptopenjdk14
-- Gradle fiel
+This is a JAVA based chat application, which would work to the hosts connected through LAN.
 
-https://stackoverflow.com/questions/51478675/error-javafx-runtime-components-are-missing-and-are-required-to-run-this-appli
+### Info
+- Language = Java
+- GUI = JavaFx
+- Build system = maven
 
+### Application features
+- 1 Server Host, multiple clients
+- Different ports, different hosts
+- Any other, let's discuss
 
-Download the java fx library
+### Setup
+- If you have already installed java and then check java version,
+> `java --version`
 
+- If not installed jdk, then try to install latest jdk, as it supports modular dependencies, where importing of JavaFX SDK will be taken by build system maven. You will have so many advantages during deployements differerent OS.
 
-https://gluonhq.com/products/javafx/
+- If JDK <= 1.8, then there is no support for maven java fx, so you can tweak some stuff and work around, but the advantage in JDK 1.8 has inbuilt JavaFX sdk, so no need to again setup.
+	1. In eclipse or preferred IDE try installing JavaFX plugin through
+		- Install new software, Name : e(fx)clipse, Site : http://download.eclipse.org/efxclipse/updates-released/3.6.0/
+		- or Install via Eclipse Marketplace by searching e(fx)clipse
+	2. In your IDE, File > Import > Existing Maven Projects > Root_Dir (containing pom.xml) > Next > Finish
+	3. Since JDK <=1.8 has JavaFX preinstalled, try commenting the maven dependency "org.openjfx", so as to prevent duplication class errors
+	```
+			<!--    
+			<dependency>
+	            <groupId>org.openjfx</groupId>
+	            <artifactId>javafx-controls</artifactId>
+	            <version>12</version>
+	    	</dependency>
+	    	-->    	
+	```
+	4. Delete the file module-info, and set up jdk/jre complaince to the preferred installed version.
 
+- If JDK > 1.8, which is 9 or higher versions, please follow the below steps
+	1. In your IDE, File > Import > Existing Maven Projects > Root_Dir (containing pom.xml) > Next > Finish
+	2. After maven downloads the dependecies, try maven run, then a window should appear
+	3. If you have more trouble, then try searching in [StackOverflow](https://stackoverflow.com/questions/51478675/error-javafx-runtime-components-are-missing-and-are-required-to-run-this-appli) for more support based on your OS
+	4. Edit the Run Configuration, based on the path of your JavaFX SDK	
+	```
+	--module-path /Library/Java/JavaVirtualMachines/javafx-sdk-11.0.2/lib
+	--add-modules=javafx.controls,javafx.fxml,javafx.base,javafx.graphics,javafx.web
+	```
 
+For more info regrading JavaFx setup, please visit [JavaFX Setup Guide](https://openjfx.io/openjfx-docs/)
 
-Then setup using the edit configurations
-
-https://stackoverflow.com/questions/51478675/error-javafx-runtime-components-are-missing-and-are-required-to-run-this-appli
 
