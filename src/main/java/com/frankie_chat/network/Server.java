@@ -41,13 +41,58 @@ public class Server implements Runnable {
 				if (client != null) {
 					client.add(writer);
 					while (true) {
-						String data = reader.readLine().trim();
-						System.out.println("Received " + data);
-						MainController.getmController().updateChatArea(data);
+						String data = reader.readLine();
+						if (data != null) {
+							data = data.trim();
+							System.out.println("Received " + data);
+							MainController.getmController().updateChatArea(data);
+							for (int i = 0; i < client.size(); i++) {
+								try {
+									BufferedWriter bw = (BufferedWriter) client.get(i);
+									bw.write(data);
+									bw.write("\r\n");
+									bw.flush();
+								} catch (Exception e) {
+									e.printStackTrace();
+									Alert alert = new Alert(AlertType.ERROR, "Error while flushing server thread data",
+											ButtonType.OK);
+									alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+									alert.show();
+								}
+							}
+						}
+					}
+				} else {
+					System.out.println("Client is NULL");
+				}
+
+			} else {
+				System.out.println("Socket is NULL");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR, "Error while running server thread", ButtonType.OK);
+			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+			alert.show();
+		}
+
+	}
+
+	public void sendServerData(String message) {
+		System.out.println("Sending server message");
+		try {
+			if (socket != null) {
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+				if (client != null) {
+					if (message != null) {
+						message = message.trim();
+						System.out.println("Received " + message);
+						MainController.getmController().updateChatArea(message);
 						for (int i = 0; i < client.size(); i++) {
 							try {
 								BufferedWriter bw = (BufferedWriter) client.get(i);
-								bw.write(data);
+								bw.write(message);
 								bw.write("\r\n");
 								bw.flush();
 							} catch (Exception e) {
@@ -59,6 +104,7 @@ public class Server implements Runnable {
 							}
 						}
 					}
+
 				} else {
 					System.out.println("Client is NULL");
 				}

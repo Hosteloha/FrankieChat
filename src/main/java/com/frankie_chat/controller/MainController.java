@@ -152,13 +152,16 @@ public class MainController implements Initializable {
 			 */
 			if (event.getSource() == btn_sendmsg) {
 				System.out.println("btn_sendmsg clicked");
-				String userMessage = txtarea_clientmessageinput.getText();
-				updateChatArea(userMessage);
-				// Clearing the message
-				txtarea_clientmessageinput.setText("");
-				if (mUser != null) {
-					mUser.sendData(userMessage);
+				String userMessage = txtarea_clientmessageinput.getText().trim();
+				if (userMessage.length() > 0) {
+					if (mUser != null) {
+						mUser.sendData(userMessage);
+					}
+					if (mServer != null) {
+						mServer.sendServerData(userMessage);
+					}
 				}
+				txtarea_clientmessageinput.setText("");
 			}
 			/**
 			 * BTN_COPY NOTES : to copy the notes to clipboard
@@ -189,8 +192,8 @@ public class MainController implements Initializable {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							Server server = new Server(socket);
-							Thread thread = new Thread(server);
+							mServer = new Server(socket);
+							Thread thread = new Thread(mServer);
 							thread.start();
 						}
 					}).start();
@@ -219,8 +222,9 @@ public class MainController implements Initializable {
 	};
 
 	public void updateChatArea(String userMessage) {
+		userMessage = userMessage.trim();
 		System.out.println("User entered : " + userMessage);
-		txtarea_LogSub.appendText("User > " + userMessage + "\n");
+		txtarea_LogSub.appendText("> " + userMessage + "\n");
 	}
 
 }

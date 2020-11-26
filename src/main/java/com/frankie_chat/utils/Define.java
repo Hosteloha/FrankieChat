@@ -4,7 +4,7 @@ public class Define {
 	/**
 	 * Application Strings
 	 */
-	public static final String str_title = "Frankie_Chat : Anonymous chat communicator";
+	public static final String str_title = "Frankie_Chat : Let's Talk";
 
 	/**
 	 * Resource paths
