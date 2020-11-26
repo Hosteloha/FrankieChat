@@ -1,6 +1,8 @@
 package com.frankie_chat.controller;
 
 import java.io.IOException;
+import java.net.BindException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
@@ -19,7 +21,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -30,6 +35,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
@@ -47,7 +53,8 @@ public class MainController implements Initializable {
 	private ToggleGroup theme_group;
 
 	@FXML
-	private MenuItem mitem_FileSettings, mitem_FileClose, mitem_connect, mitem_host, mitem_shortcuts, mitem_about;
+	private MenuItem mitem_FileSettings, mitem_FileClose, mitem_connect, mitem_host, mitem_shortcuts, mitem_about,
+			mitem_end;
 
 	@FXML
 	private TabPane tabpane_main;
@@ -56,17 +63,14 @@ public class MainController implements Initializable {
 	private Tab tab_meeting, tab_chat, tab_notes;
 
 	@FXML
-	private Button btn_copymsgs, btn_clearmsgs, btn_endconn, btn_sendmsg, btn_copynotes;
-
-	@FXML
-	private Label lbl_connection, lbl_port, lb_users;
+	private Button btn_clearmsgs, btn_endconn, btn_sendmsg, btn_copynotes, btn_hostmeeting, btn_connect;
 
 	@FXML
 	private TextArea txtarea_LogSub, txtarea_clientmessageinput;
 
 	@FXML
 	private TextField txtFld_task0, txtFld_task1, txtFld_task2, txtFld_task3, txtFld_task4, txtFld_task5, txtFld_task6,
-			txtFld_task9;
+			txtFld_task9, txtip_ipaddr, txtip_port;
 
 	@FXML
 	private ScrollPane scrlPane_AppLog;
@@ -112,28 +116,29 @@ public class MainController implements Initializable {
 
 	public void initListeners() {
 		// Buttons
-		btn_copymsgs.setOnAction(mEventHandler);
 		btn_clearmsgs.setOnAction(mEventHandler);
 		btn_endconn.setOnAction(mEventHandler);
 		btn_sendmsg.setOnAction(mEventHandler);
 		btn_copynotes.setOnAction(mEventHandler);
+		btn_hostmeeting.setOnAction(mEventHandler);
+		btn_connect.setOnAction(mEventHandler);
 		// Menu items
 		mitem_host.setOnAction(mEventHandler);
 		mitem_connect.setOnAction(mEventHandler);
+		mitem_end.setOnAction(mEventHandler);
 	}
 
 	private UserX mUser = null;
 	private Server mServer = null;
+	private Thread mClientThread = null;
+	private Thread mServerThread = null;
+	ServerSocket serSocket = null;
+	private boolean isServerRunning = false;
+
 	EventHandler<ActionEvent> mEventHandler = new EventHandler<ActionEvent>() {
 		@Override
 		public void handle(ActionEvent event) {
 			System.out.println("Clicked :: " + event.getSource());
-			/**
-			 * BTN_COPY MESSAGE : to copy the content to clipboard
-			 */
-			if (event.getSource() == btn_copymsgs) {
-				System.out.println("btn_copymsgs clicked");
-			}
 			/**
 			 * BTN_CLEAR MESSAGE : to clear the messages off the chat window
 			 */
@@ -144,8 +149,10 @@ public class MainController implements Initializable {
 			/**
 			 * BTN_END CONNECTION : to end the chat communication
 			 */
-			if (event.getSource() == btn_endconn) {
+			if (event.getSource() == btn_endconn || event.getSource() == mitem_end) {
 				System.out.println("btn_endconn clicked");
+				closeResource();
+				disableViews(false);
 			}
 			/**
 			 * BTN_SEND : to broadcast the message to the server
@@ -172,48 +179,86 @@ public class MainController implements Initializable {
 			/**
 			 * MENU ITEM : HOST SERVER ; to host server
 			 */
-			if (event.getSource() == mitem_host) {
+			if (event.getSource() == mitem_host || event.getSource() == btn_hostmeeting) {
+				disableViews(true);
 				System.out.println("mitem_host clicked");
+				txtip_ipaddr.setText("localhost");
+				int port = 2003;
+				String portText = txtip_port.getText();
+				if (portText != null && portText.length() == 4) {
+					port = Integer.parseInt(txtip_port.getText());
+				} else {
+					txtip_port.setText("2003");
+				}
+				// Enabling server
+				isServerRunning = true;
 				try {
-					new Thread(() -> {
-						ServerSocket serSocket = null;
-						try {
-							serSocket = new ServerSocket(2003);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						while (true) {
-							System.out.println("Server running...");
-							Socket socket = null;
+					final Integer finalPort = new Integer(port);
+					mServerThread = new Thread(new Runnable() {
+						@Override
+						public void run() {
 							try {
-								socket = serSocket.accept();
+								serSocket = new ServerSocket(finalPort);
+							} catch (BindException e) {
+								e.printStackTrace();
+								Alert alert = new Alert(AlertType.ERROR,
+										"Already port in use, \nPlease ABORT/END and try some other port",
+										ButtonType.OK);
+								alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+								alert.show();
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							mServer = new Server(socket);
-							Thread thread = new Thread(mServer);
-							thread.start();
+							while (isServerRunning) {
+								System.out.println("Server running...");
+								Socket socket = null;
+								try {
+									socket = serSocket.accept();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								mServer = new Server(socket);
+								Thread thread = new Thread(mServer);
+								thread.start();
+							}
 						}
-					}).start();
+					});
+					mServerThread.start();
+					recordAppLog("Host running at port " + finalPort + " Address : " + InetAddress.getLocalHost(),
+							Level.SEVERE);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			/**
-			 * MENU ITEM : CONNECT SERVER ; Connect user to Server host
+			 * MENU ITEM : CONNECT CLIENT TO SERVER ; Connect user to Server host
 			 */
-			if (event.getSource() == mitem_connect) {
+			if (event.getSource() == mitem_connect || event.getSource() == btn_connect) {
+				disableViews(true);
 				System.out.println("mitem_host clicked");
+				String ip_address = txtip_ipaddr.getText();
+				int port = 2003;
+				String portText = txtip_port.getText();
+				if (portText != null && portText.length() == 4) {
+					port = Integer.parseInt(txtip_port.getText());
+				} else {
+					txtip_port.setText("2003");
+				}
 				try {
-					new Thread(() -> {
-						String host = "localhost";
-						int port = 2003;
-						mUser = new UserX(host, port);
-						Thread t1 = new Thread(mUser);
-						t1.start();
-					}).start();
+					final Integer finalPort = new Integer(port);
+					final String finalIpAddr = new String(ip_address);
+
+					mClientThread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							mUser = new UserX(finalIpAddr, finalPort);
+							Thread t1 = new Thread(mUser);
+							t1.start();
+						}
+					});
+					mClientThread.start();
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -227,4 +272,39 @@ public class MainController implements Initializable {
 		txtarea_LogSub.appendText("> " + userMessage + "\n");
 	}
 
+	public void closeResource() {
+		// Close client connection, else we will get socket connection close
+		if (mUser != null) {
+			mUser.closeResources();
+		}
+		// End host socket
+		isServerRunning = false;
+		if (mServer != null) {
+			mServer.closeResources();
+
+		}
+		if (mClientThread != null) {
+			mClientThread.stop();
+		}
+		if (serSocket != null) {
+			try {
+				serSocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if (mServerThread != null) {
+			mServerThread.stop();
+		}
+
+		recordAppLog("Connection END, Resources closed", Level.SEVERE);
+	}
+
+	public void disableViews(boolean isDisable) {
+		txtip_port.setDisable(isDisable);
+		txtip_ipaddr.setDisable(isDisable);
+		btn_connect.setDisable(isDisable);
+		btn_hostmeeting.setDisable(isDisable);
+
+	}
 }

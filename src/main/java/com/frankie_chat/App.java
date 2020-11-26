@@ -1,24 +1,22 @@
 package com.frankie_chat;
 
-import javafx.application.Application;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
-import javafx.stage.Stage;
-
 import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.frankie_chat.controller.MainController;
 import com.frankie_chat.utils.Define;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
 /**
- * JavaFX App 
+ * JavaFX App
  */
 public class App extends Application {
 
@@ -53,6 +51,16 @@ public class App extends Application {
 			Logger.getLogger(App.class.getSimpleName()).log(Level.SEVERE, " setApplicationIcon ::" + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void stop() throws Exception {
+		System.out.println("Application close");
+		MainController mController = MainController.getmController();
+		if (mController != null) {
+			mController.closeResource();
+		}
+		super.stop();
 	}
 
 //    @Override

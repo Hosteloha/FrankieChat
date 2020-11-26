@@ -2,52 +2,47 @@ package com.frankie_chat.network;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.logging.Level;
 
 import com.frankie_chat.controller.MainController;
-
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
 
 public class UserX implements Runnable {
 
 	BufferedWriter writer = null;
 	BufferedReader reader = null;
+	private Socket socketClient = null;
 
 	public UserX(String host, int port) {
 		try {
-			Socket socketClient = new Socket(host, port);
+			socketClient = new Socket(host, port);
 			if (socketClient != null) {
 				writer = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 				reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
 			}
+		} catch (SocketException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR, "Error while creating the user socket", ButtonType.OK);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.show();
 		}
-
 	}
 
 	public void sendData(String message) {
-		System.out.println("Sending data to server");
 		String str = message;
 		try {
 			if (writer != null) {
 				writer.write(str);
 				writer.write("\r\n");
 				writer.flush();
+			} else {
+				MainController.getmController().recordAppLog("Could not send to server", Level.SEVERE);
 			}
+		} catch (SocketException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR, "Error while sending data to host", ButtonType.OK);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.show();
 		}
 	}
 
@@ -57,20 +52,23 @@ public class UserX implements Runnable {
 			while ((msg = reader.readLine()) != null) {
 				MainController.getmController().updateChatArea(msg);
 			}
+		} catch (SocketException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR, "Error while running the user thread", ButtonType.OK);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.show();
 		}
 	}
 
-	public static void main(String[] args) {
-		String host = "localhost";
-		int port = 2003;
-		UserX one = new UserX(host, port);
-		Thread t1 = new Thread(one);
-		t1.start();
+	public void closeResources() {
+		System.out.println("Client ended");
+		try {
+			if (writer != null) {
+				writer.close();
+			}
+			if (reader != null) {
+				reader.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
 }
