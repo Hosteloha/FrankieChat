@@ -89,9 +89,9 @@
                                                                 <Button fx:id="btn_copymsgs" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Copy" />
                                                                   <Button fx:id="btn_clearmsgs" mnemonicParsing="false" text="Clear" />
                                                                   <Button fx:id="btn_endconn" mnemonicParsing="false" text="End" textFill="#d00000" />
-                                                                  <Label text="Connection : 10.126.162.115" />
-                                                                  <Label text="Port : 2023" />
-                                                                  <Label text="Users : 10" />
+                                                                  <Label fx:id="lbl_connection" text="Connection : 10.126.162.115" />
+                                                                  <Label fx:id="lbl_port" text="Port : 2023" />
+                                                                  <Label fx:id="lb_users" text="Users : 10" />
                                                                </children>
                                                             </HBox>
                                                             <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="1">
