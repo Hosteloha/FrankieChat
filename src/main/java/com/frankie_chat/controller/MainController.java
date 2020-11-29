@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.frankie_chat.bubble.Bubble;
 import com.frankie_chat.network.Server;
 import com.frankie_chat.network.UserX;
 import com.frankie_chat.utils.Define;
@@ -20,12 +21,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -35,6 +37,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
@@ -74,13 +79,16 @@ public class MainController implements Initializable {
 			txtFld_task9, txtip_ipaddr, txtip_port, mitem_txFld_usrname, mitem_txFld_usrname_quick;
 
 	@FXML
-	private ScrollPane scrlPane_AppLog;
+	private ScrollPane scrlPane_AppLog, scrlPane_ChatPane;
 
 	@FXML
 	private TextFlow txtFlow_AppLog;
 
 	@FXML
 	private RadioMenuItem mitem_enterkey_send, mitem_enterkey_send_quick;
+
+	@FXML
+	private ListView listview_chatitems;
 
 	private static MainController mController = null;
 
@@ -172,6 +180,7 @@ public class MainController implements Initializable {
 					}
 				}
 				txtarea_clientmessageinput.setText("");
+				testBubbleFeature(userMessage);
 			}
 			/**
 			 * BTN_COPY NOTES : to copy the notes to clipboard
@@ -267,7 +276,16 @@ public class MainController implements Initializable {
 				}
 			}
 		}
+
 	};
+
+	public void testBubbleFeature(String msg) {
+		Bubble bl = new Bubble(msg);
+		HBox x = new HBox();
+		x.getChildren().addAll(bl);
+		listview_chatitems.getItems().add(x);
+
+	}
 
 	public void updateChatArea(String userMessage) {
 		userMessage = userMessage.trim();

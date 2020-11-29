@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuButton?>
@@ -110,7 +111,12 @@
                                                             <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                          <children>
-                                                            <TextArea fx:id="txtarea_LogSub" prefHeight="200.0" prefWidth="200.0" promptText="Client messages" />
+                                                            <TextArea fx:id="txtarea_LogSub" prefHeight="200.0" prefWidth="200.0" promptText="Client messages" visible="false" />
+                                                            <ScrollPane fx:id="scrlPane_ChatPane">
+                                                               <content>
+                                                                  <ListView fx:id="listview_chatitems" prefHeight="200.0" prefWidth="200.0" />
+                                                               </content>
+                                                            </ScrollPane>
                                                             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="2">
                                                                <children>
                                                                   <MenuButton mnemonicParsing="false" text="Chat Settings">
