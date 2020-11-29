@@ -2,18 +2,22 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CustomMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -28,7 +32,6 @@
         <menus>
           <Menu fx:id="menu_File" mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem fx:id="mitem_FileSettings" mnemonicParsing="false" text="Settings" />
                   <Menu fx:id="menu_Themes" mnemonicParsing="false" text="Theme">
                      <items>
                         <RadioMenuItem fx:id="mitem_ThemeLight" mnemonicParsing="false" selected="true" text="Light">
@@ -56,6 +59,29 @@
               <MenuItem fx:id="mitem_about" mnemonicParsing="false" text="About" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Chat Settings">
+              <items>
+                  <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
+                     <content>
+                        <TextField fx:id="mitem_txFld_usrname" promptText="user name optional" />
+                     </content>
+                  </CustomMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="mitem_clear_chat" mnemonicParsing="false" text="Clear chat window" />
+                  <MenuItem fx:id="mitem_copy_chat" mnemonicParsing="false" text="Copy chat" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="mitem_enterkey_send" mnemonicParsing="false" text="Enter  key to send" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="View">
+              <items>
+                  <MenuItem fx:id="mitem_view_compact" mnemonicParsing="false" text="Compact" />
+                <MenuItem fx:id="mitem_view_maximize" mnemonicParsing="false" text="Maximize" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="mitem_view_showlog" mnemonicParsing="false" text="Show Log" />
+                  <RadioMenuItem fx:id="mitem_view_shownotes" mnemonicParsing="false" text="Show Notes" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
       <TabPane fx:id="tabpane_main" VBox.vgrow="SOMETIMES">
@@ -87,15 +113,43 @@
                                                             <TextArea fx:id="txtarea_LogSub" prefHeight="200.0" prefWidth="200.0" promptText="Client messages" />
                                                             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="2">
                                                                <children>
-                                                                  <Button fx:id="btn_clearmsgs" mnemonicParsing="false" text="Clear" />
+                                                                  <MenuButton mnemonicParsing="false" text="Chat Settings">
+                                                                    <items>
+                                                                        <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
+                                                                           <content>
+                                                                              <TextField fx:id="mitem_txFld_usrname_quick" promptText="user name optional" />
+                                                                           </content>
+                                                                        </CustomMenuItem>
+                                                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                                                      <MenuItem fx:id="mitem_clear_chat_quick" mnemonicParsing="false" text="Clear chat window" />
+                                                                      <MenuItem fx:id="mitem_copy_chat_quick" mnemonicParsing="false" text="Copy chat" />
+                                                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                                                        <RadioMenuItem fx:id="mitem_enterkey_send_quick" mnemonicParsing="false" text="Enter  key to send" />
+                                                                    </items>
+                                                                  </MenuButton>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
-                                                                  <Button fx:id="btn_connect" mnemonicParsing="false" text="Connect" />
-                                                                  <TextField fx:id="txtip_ipaddr" prefHeight="27.0" prefWidth="118.0" promptText="10.126.162.000" />
-                                                                  <TextField fx:id="txtip_port" prefHeight="27.0" prefWidth="81.0" promptText="2003 - port" />
+                                                                  <Button fx:id="btn_connect" mnemonicParsing="false" text="Connect">
+                                                                     <tooltip>
+                                                                        <Tooltip text="Enter the ip address and port number to connect to meeting" />
+                                                                     </tooltip></Button>
+                                                                  <TextField fx:id="txtip_ipaddr" prefHeight="27.0" prefWidth="118.0" promptText="10.126.162.000">
+                                                                     <tooltip>
+                                                                        <Tooltip text="IP Address" />
+                                                                     </tooltip></TextField>
+                                                                  <TextField fx:id="txtip_port" prefHeight="27.0" prefWidth="81.0" promptText="2003 - port">
+                                                                     <tooltip>
+                                                                        <Tooltip text="Port Number" />
+                                                                     </tooltip></TextField>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
-                                                                  <Button fx:id="btn_endconn" mnemonicParsing="false" text="End" textFill="#d00000" />
+                                                                  <Button fx:id="btn_endconn" mnemonicParsing="false" text="End" textFill="#d00000">
+                                                                     <tooltip>
+                                                                        <Tooltip text="To end the ongoing meeting" />
+                                                                     </tooltip></Button>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
-                                                                  <Button fx:id="btn_hostmeeting" mnemonicParsing="false" text="Host Meeting" />
+                                                                  <Button fx:id="btn_hostmeeting" mnemonicParsing="false" text="Host Meeting">
+                                                                     <tooltip>
+                                                                        <Tooltip text="Enter port number to host the meeting" />
+                                                                     </tooltip></Button>
                                                                </children>
                                                             </HBox>
                                                             <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="1">
@@ -105,6 +159,9 @@
                                                                      <HBox.margin>
                                                                         <Insets />
                                                                      </HBox.margin>
+                                                                     <tooltip>
+                                                                        <Tooltip text="Enable enter to send in Chat Settings" />
+                                                                     </tooltip>
                                                                   </Button>
                                                                </children>
                                                             </HBox>
@@ -150,7 +207,10 @@
                                                                   <Button fx:id="btn_copynotes" mnemonicParsing="false" text="Copy" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                                                                      <GridPane.margin>
                                                                         <Insets top="5.0" />
-                                                                     </GridPane.margin></Button>
+                                                                     </GridPane.margin>
+                                                                     <tooltip>
+                                                                        <Tooltip text="Copy notes all at once with identation" />
+                                                                     </tooltip></Button>
                                                                   <TextField fx:id="txtFld_task0" />
                                                                   <TextField fx:id="txtFld_task1" GridPane.rowIndex="1" />
                                                                   <TextField fx:id="txtFld_task2" GridPane.rowIndex="2" />

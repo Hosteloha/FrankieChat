@@ -54,7 +54,8 @@ public class MainController implements Initializable {
 
 	@FXML
 	private MenuItem mitem_FileSettings, mitem_FileClose, mitem_connect, mitem_host, mitem_shortcuts, mitem_about,
-			mitem_end;
+			mitem_end, mitem_clear_chat, mitem_copy_chat, mitem_clear_chat_quick, mitem_copy_chat_quick,
+			mitem_view_compact, mitem_view_maximize, mitem_view_showlog, mitem_view_shownotes;
 
 	@FXML
 	private TabPane tabpane_main;
@@ -63,20 +64,23 @@ public class MainController implements Initializable {
 	private Tab tab_meeting, tab_chat, tab_notes;
 
 	@FXML
-	private Button btn_clearmsgs, btn_endconn, btn_sendmsg, btn_copynotes, btn_hostmeeting, btn_connect;
+	private Button btn_endconn, btn_sendmsg, btn_copynotes, btn_hostmeeting, btn_connect;
 
 	@FXML
 	private TextArea txtarea_LogSub, txtarea_clientmessageinput;
 
 	@FXML
 	private TextField txtFld_task0, txtFld_task1, txtFld_task2, txtFld_task3, txtFld_task4, txtFld_task5, txtFld_task6,
-			txtFld_task9, txtip_ipaddr, txtip_port;
+			txtFld_task9, txtip_ipaddr, txtip_port, mitem_txFld_usrname, mitem_txFld_usrname_quick;
 
 	@FXML
 	private ScrollPane scrlPane_AppLog;
 
 	@FXML
 	private TextFlow txtFlow_AppLog;
+
+	@FXML
+	private RadioMenuItem mitem_enterkey_send, mitem_enterkey_send_quick;
 
 	private static MainController mController = null;
 
@@ -116,7 +120,6 @@ public class MainController implements Initializable {
 
 	public void initListeners() {
 		// Buttons
-		btn_clearmsgs.setOnAction(mEventHandler);
 		btn_endconn.setOnAction(mEventHandler);
 		btn_sendmsg.setOnAction(mEventHandler);
 		btn_copynotes.setOnAction(mEventHandler);
@@ -142,7 +145,7 @@ public class MainController implements Initializable {
 			/**
 			 * BTN_CLEAR MESSAGE : to clear the messages off the chat window
 			 */
-			if (event.getSource() == btn_clearmsgs) {
+			if (event.getSource() == mitem_clear_chat || event.getSource() == mitem_clear_chat_quick) {
 				System.out.println("btn_clearmsgs clicked");
 				txtarea_LogSub.setText("");
 			}
