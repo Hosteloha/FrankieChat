@@ -1,7 +1,7 @@
 # FrankieChat
 This is a JAVA based chat application, which would work to the hosts connected through LAN.
 
-[All about FrankieChat]( /screenshots/frankie_chat_howto.png)
+![All about FrankieChat](/screenshots/frankie_chat_howto.png)
 
 ### Info
 - Language = Java
