@@ -15,14 +15,17 @@ public class UserX implements Runnable {
 
 	BufferedWriter writer = null;
 	BufferedReader reader = null;
+
 	private Socket socketClient = null;
 
 	public UserX(String host, int port) {
 		try {
 			socketClient = new Socket(host, port);
 			if (socketClient != null) {
-				writer = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-				reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
+				writer = new BufferedWriter(
+						new OutputStreamWriter(socketClient.getOutputStream()));
+				reader = new BufferedReader(
+						new InputStreamReader(socketClient.getInputStream()));
 			}
 		} catch (SocketException e) {
 		} catch (Exception e) {
@@ -31,14 +34,15 @@ public class UserX implements Runnable {
 	}
 
 	public void sendData(String message) {
-		String str = message;
 		try {
+			// Write to OP_stream
 			if (writer != null) {
-				writer.write(str);
+				writer.write(message);
 				writer.write("\r\n");
 				writer.flush();
 			} else {
-				MainController.getmController().recordAppLog("Could not send to server", Level.SEVERE);
+				MainController.getmController()
+						.recordAppLog("Could not send to server", Level.SEVERE);
 			}
 		} catch (SocketException e) {
 		} catch (Exception e) {
@@ -49,9 +53,13 @@ public class UserX implements Runnable {
 	public void run() {
 		try {
 			String msg = "";
+			MainController.getmController().updateChatArea("-- Connected --",
+					false);
 			while ((msg = reader.readLine()) != null) {
-				MainController.getmController().updateChatArea(msg);
+				MainController.getmController().updateChatArea(msg, true);
 			}
+			MainController.getmController()
+					.updateChatArea("-- Connection End --", false);
 		} catch (SocketException e) {
 		} catch (Exception e) {
 			e.printStackTrace();

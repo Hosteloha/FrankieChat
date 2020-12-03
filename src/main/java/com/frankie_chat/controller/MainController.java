@@ -1,6 +1,7 @@
 package com.frankie_chat.controller;
 
 import java.io.IOException;
+
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -11,8 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.frankie_chat.bubble.Bubble;
+import com.frankie_chat.bubble.Bubble.POS;
+import com.frankie_chat.network.Message;
 import com.frankie_chat.network.Server;
 import com.frankie_chat.network.UserX;
+import com.frankie_chat.utils.AppUtils;
 import com.frankie_chat.utils.Define;
 
 import javafx.application.Platform;
@@ -37,8 +41,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -58,9 +62,11 @@ public class MainController implements Initializable {
 	private ToggleGroup theme_group;
 
 	@FXML
-	private MenuItem mitem_FileSettings, mitem_FileClose, mitem_connect, mitem_host, mitem_shortcuts, mitem_about,
-			mitem_end, mitem_clear_chat, mitem_copy_chat, mitem_clear_chat_quick, mitem_copy_chat_quick,
-			mitem_view_compact, mitem_view_maximize, mitem_view_showlog, mitem_view_shownotes;
+	private MenuItem mitem_FileSettings, mitem_FileClose, mitem_connect,
+			mitem_host, mitem_shortcuts, mitem_about, mitem_end,
+			mitem_clear_chat, mitem_copy_chat, mitem_clear_chat_quick,
+			mitem_copy_chat_quick, mitem_view_compact, mitem_view_maximize,
+			mitem_view_showlog, mitem_view_shownotes;
 
 	@FXML
 	private TabPane tabpane_main;
@@ -69,17 +75,20 @@ public class MainController implements Initializable {
 	private Tab tab_meeting, tab_chat, tab_notes;
 
 	@FXML
-	private Button btn_endconn, btn_sendmsg, btn_copynotes, btn_hostmeeting, btn_connect;
+	private Button btn_endconn, btn_sendmsg, btn_copynotes, btn_hostmeeting,
+			btn_connect;
 
 	@FXML
-	private TextArea txtarea_LogSub, txtarea_clientmessageinput;
+	private TextArea txtarea_clientmessageinput;
 
 	@FXML
-	private TextField txtFld_task0, txtFld_task1, txtFld_task2, txtFld_task3, txtFld_task4, txtFld_task5, txtFld_task6,
-			txtFld_task9, txtip_ipaddr, txtip_port, mitem_txFld_usrname, mitem_txFld_usrname_quick;
+	private TextField txtFld_task0, txtFld_task1, txtFld_task2, txtFld_task3,
+			txtFld_task4, txtFld_task5, txtFld_task6, txtFld_task9,
+			txtip_ipaddr, txtip_port, mitem_txFld_usrname,
+			mitem_txFld_usrname_quick;
 
 	@FXML
-	private ScrollPane scrlPane_AppLog, scrlPane_ChatPane;
+	private ScrollPane scrlPane_AppLog;
 
 	@FXML
 	private TextFlow txtFlow_AppLog;
@@ -102,10 +111,19 @@ public class MainController implements Initializable {
 		recordAppLog("MainController :: initialized", Level.INFO);
 		recordAppLog(Define.app_info, Level.INFO);
 		initListeners();
+
+		// Creating default name //TODO Make it editable
+		String userName = AppUtils.initializeDefaultUserName();
+		mitem_txFld_usrname.setText(userName);
+		mitem_txFld_usrname.setDisable(true);
+		mitem_txFld_usrname_quick.setText(userName);
+		mitem_txFld_usrname_quick.setDisable(true);
+		recordAppLog("Deafult user name created as : " + userName, Level.INFO);
 	}
 
 	public void recordAppLog(String appLog, Level logLevel) {
-		Logger.getLogger(MainController.class.getSimpleName()).log(logLevel, appLog);
+		Logger.getLogger(MainController.class.getSimpleName()).log(logLevel,
+				appLog);
 		Platform.runLater(() -> {
 			Text text = new Text("> " + appLog + "\n");
 			text.setStyle("-fx-font: 13 consolas;");
@@ -118,10 +136,11 @@ public class MainController implements Initializable {
 				text.setFill(Color.LIGHTGRAY);
 			}
 
-			txtFlow_AppLog.getChildren().addListener((ListChangeListener<Node>) ((change) -> {
-				txtFlow_AppLog.requestLayout();
-				scrlPane_AppLog.setVvalue(1.0);
-			}));
+			txtFlow_AppLog.getChildren()
+					.addListener((ListChangeListener<Node>) ((change) -> {
+						txtFlow_AppLog.requestLayout();
+						scrlPane_AppLog.setVvalue(1.0);
+					}));
 			txtFlow_AppLog.getChildren().add(text);
 		});
 	}
@@ -137,6 +156,23 @@ public class MainController implements Initializable {
 		mitem_host.setOnAction(mEventHandler);
 		mitem_connect.setOnAction(mEventHandler);
 		mitem_end.setOnAction(mEventHandler);
+		txtarea_clientmessageinput
+				.setOnKeyPressed(new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent event) {
+						if (event.getCode().equals(KeyCode.ENTER)
+								&& event.isShiftDown()) {
+							btn_sendmsg.fire();
+						}
+					}
+				});
+		// listview_chatitems.setMouseTransparent(true);
+		// listview_chatitems.setFocusTraversable(false);
+		listview_chatitems.getItems()
+				.addListener((ListChangeListener<Node>) ((change) -> {
+					int items_size = listview_chatitems.getItems().size() - 1;
+					listview_chatitems.scrollTo(items_size);
+				}));
 	}
 
 	private UserX mUser = null;
@@ -153,14 +189,16 @@ public class MainController implements Initializable {
 			/**
 			 * BTN_CLEAR MESSAGE : to clear the messages off the chat window
 			 */
-			if (event.getSource() == mitem_clear_chat || event.getSource() == mitem_clear_chat_quick) {
+			if (event.getSource() == mitem_clear_chat
+					|| event.getSource() == mitem_clear_chat_quick) {
 				System.out.println("btn_clearmsgs clicked");
-				txtarea_LogSub.setText("");
+				// TODO to remove messages from scroll pane
 			}
 			/**
 			 * BTN_END CONNECTION : to end the chat communication
 			 */
-			if (event.getSource() == btn_endconn || event.getSource() == mitem_end) {
+			if (event.getSource() == btn_endconn
+					|| event.getSource() == mitem_end) {
 				System.out.println("btn_endconn clicked");
 				closeResource();
 				disableViews(false);
@@ -170,17 +208,36 @@ public class MainController implements Initializable {
 			 */
 			if (event.getSource() == btn_sendmsg) {
 				System.out.println("btn_sendmsg clicked");
-				String userMessage = txtarea_clientmessageinput.getText().trim();
+				String userMessage = txtarea_clientmessageinput.getText()
+						.trim();
 				if (userMessage.length() > 0) {
+					userMessage = userMessage.trim();
+					// Remove empty lines if present any
+					userMessage = userMessage.replaceAll("(?m)^[ \t]*\r?\n",
+							"");
+					// Remove new lines with spaces and dots
+					userMessage = userMessage.replaceAll("[\\t\\n\\r]+", " | ");
+					// Create JSON Message object
+					Message message = new Message();
+					message.setContent(userMessage);
+					message.setOwner(AppUtils.getUSERNAME());
+
 					if (mUser != null) {
-						mUser.sendData(userMessage);
+						message.setServer(false);
+						// Convert to GSON
+						String jsonMessage = AppUtils
+								.createJsonMessage(message);
+						mUser.sendData(jsonMessage);
 					}
 					if (mServer != null) {
-						mServer.sendServerData(userMessage);
+						message.setServer(true);
+						// Convert to GSON
+						String jsonMessage = AppUtils
+								.createJsonMessage(message);
+						mServer.sendServerData(jsonMessage);
 					}
 				}
 				txtarea_clientmessageinput.setText("");
-				testBubbleFeature(userMessage);
 			}
 			/**
 			 * BTN_COPY NOTES : to copy the notes to clipboard
@@ -191,7 +248,8 @@ public class MainController implements Initializable {
 			/**
 			 * MENU ITEM : HOST SERVER ; to host server
 			 */
-			if (event.getSource() == mitem_host || event.getSource() == btn_hostmeeting) {
+			if (event.getSource() == mitem_host
+					|| event.getSource() == btn_hostmeeting) {
 				disableViews(true);
 				System.out.println("mitem_host clicked");
 				txtip_ipaddr.setText("localhost");
@@ -216,7 +274,8 @@ public class MainController implements Initializable {
 								Alert alert = new Alert(AlertType.ERROR,
 										"Already port in use, \nPlease ABORT/END and try some other port",
 										ButtonType.OK);
-								alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+								alert.getDialogPane()
+										.setMinHeight(Region.USE_PREF_SIZE);
 								alert.show();
 							} catch (IOException e) {
 								e.printStackTrace();
@@ -236,7 +295,8 @@ public class MainController implements Initializable {
 						}
 					});
 					mServerThread.start();
-					recordAppLog("Host running at port " + finalPort + " Address : " + InetAddress.getLocalHost(),
+					recordAppLog("Host running at port " + finalPort
+							+ " Address : " + InetAddress.getLocalHost(),
 							Level.SEVERE);
 
 				} catch (Exception e) {
@@ -244,9 +304,11 @@ public class MainController implements Initializable {
 				}
 			}
 			/**
-			 * MENU ITEM : CONNECT CLIENT TO SERVER ; Connect user to Server host
+			 * MENU ITEM : CONNECT CLIENT TO SERVER ; Connect user to Server
+			 * host
 			 */
-			if (event.getSource() == mitem_connect || event.getSource() == btn_connect) {
+			if (event.getSource() == mitem_connect
+					|| event.getSource() == btn_connect) {
 				disableViews(true);
 				System.out.println("mitem_host clicked");
 				String ip_address = txtip_ipaddr.getText();
@@ -279,18 +341,56 @@ public class MainController implements Initializable {
 
 	};
 
-	public void testBubbleFeature(String msg) {
-		Bubble bl = new Bubble(msg);
-		HBox x = new HBox();
-		x.getChildren().addAll(bl);
-		listview_chatitems.getItems().add(x);
-
+	public void testBubbleFeature(String messageContent, String userName,
+			Bubble.POS position) {
+		Bubble bl = null;
+		if (userName == null) {
+			bl = new Bubble(messageContent);
+		} else {
+			bl = new Bubble(messageContent, userName);
+		}
+		HBox hbox = new HBox();
+		hbox.getChildren().addAll(bl);
+		switch (position) {
+			case LEFT :
+				hbox.setAlignment(Pos.BASELINE_LEFT);
+				break;
+			case RIGHT :
+				hbox.setAlignment(Pos.BASELINE_RIGHT);
+				break;
+			case CENTER :
+				hbox.setAlignment(Pos.BASELINE_CENTER);
+			default :
+				break;
+		}
+		// To avoid illegal state exception
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				listview_chatitems.getItems().add(hbox);
+			}
+		});
 	}
 
-	public void updateChatArea(String userMessage) {
-		userMessage = userMessage.trim();
-		System.out.println("User entered : " + userMessage);
-		txtarea_LogSub.appendText("> " + userMessage + "\n");
+	public void updateChatArea(String userMessage, boolean isJson) {
+		if (isJson) {
+			Message message = AppUtils.getJsonObject(userMessage);
+			String messageOwner = message.getOwner();
+			String currentUser = AppUtils.getUSERNAME();
+			POS position = null;
+
+			if (messageOwner.contentEquals(currentUser)) {
+				// then some other owner; not your message
+				position = Bubble.POS.RIGHT;
+			} else {
+				position = Bubble.POS.LEFT;
+			}
+
+			testBubbleFeature(message.getContent(), message.getOwner(),
+					position);
+		} else {
+			testBubbleFeature(userMessage, null, Bubble.POS.CENTER);
+		}
 	}
 
 	public void closeResource() {

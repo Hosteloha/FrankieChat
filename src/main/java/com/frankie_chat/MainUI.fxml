@@ -71,7 +71,7 @@
                   <MenuItem fx:id="mitem_clear_chat" mnemonicParsing="false" text="Clear chat window" />
                   <MenuItem fx:id="mitem_copy_chat" mnemonicParsing="false" text="Copy chat" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <RadioMenuItem fx:id="mitem_enterkey_send" mnemonicParsing="false" text="Enter  key to send" />
+                  <RadioMenuItem fx:id="mitem_enterkey_send" mnemonicParsing="false" text="Shift+Enter  key to send" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="View">
@@ -111,12 +111,7 @@
                                                             <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                          <children>
-                                                            <TextArea fx:id="txtarea_LogSub" prefHeight="200.0" prefWidth="200.0" promptText="Client messages" visible="false" />
-                                                            <ScrollPane fx:id="scrlPane_ChatPane">
-                                                               <content>
-                                                                  <ListView fx:id="listview_chatitems" prefHeight="200.0" prefWidth="200.0" />
-                                                               </content>
-                                                            </ScrollPane>
+                                                            <ListView fx:id="listview_chatitems" prefHeight="250.0" prefWidth="664.0" style="-fx-control-inner-background-alt: -fx-control-inner-background;" />
                                                             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="2">
                                                                <children>
                                                                   <MenuButton mnemonicParsing="false" text="Chat Settings">
@@ -130,7 +125,7 @@
                                                                       <MenuItem fx:id="mitem_clear_chat_quick" mnemonicParsing="false" text="Clear chat window" />
                                                                       <MenuItem fx:id="mitem_copy_chat_quick" mnemonicParsing="false" text="Copy chat" />
                                                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                                                        <RadioMenuItem fx:id="mitem_enterkey_send_quick" mnemonicParsing="false" text="Enter  key to send" />
+                                                                        <RadioMenuItem fx:id="mitem_enterkey_send_quick" mnemonicParsing="false" text="Shift+Enter  key to send" />
                                                                     </items>
                                                                   </MenuButton>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
@@ -166,7 +161,7 @@
                                                                         <Insets />
                                                                      </HBox.margin>
                                                                      <tooltip>
-                                                                        <Tooltip text="Enable enter to send in Chat Settings" />
+                                                                        <Tooltip text="Enable Shift + Enter to send in Chat Settings" />
                                                                      </tooltip>
                                                                   </Button>
                                                                </children>

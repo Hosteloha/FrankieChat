@@ -28,18 +28,23 @@ public class Server implements Runnable {
 	public void run() {
 		try {
 			if (socket != null) {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(socket.getInputStream()));
+				BufferedWriter writer = new BufferedWriter(
+						new OutputStreamWriter(socket.getOutputStream()));
+
 				if (client != null) {
 					client.add(writer);
 					while (true) {
 						String data = reader.readLine();
 						if (data != null) {
 							data = data.trim();
-							MainController.getmController().updateChatArea(data);
+							MainController.getmController().updateChatArea(data,
+									true);
 							for (int i = 0; i < client.size(); i++) {
 								try {
-									BufferedWriter bw = (BufferedWriter) client.get(i);
+									BufferedWriter bw = (BufferedWriter) client
+											.get(i);
 									bw.write(data);
 									bw.write("\r\n");
 									bw.flush();
@@ -69,15 +74,16 @@ public class Server implements Runnable {
 		System.out.println("Sending server message");
 		try {
 			if (socket != null) {
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+				BufferedWriter writer = new BufferedWriter(
+						new OutputStreamWriter(socket.getOutputStream()));
 				if (client != null) {
 					if (message != null) {
-						message = message.trim();
-						System.out.println("Received " + message);
-						MainController.getmController().updateChatArea(message);
+						MainController.getmController().updateChatArea(message,
+								true);
 						for (int i = 0; i < client.size(); i++) {
 							try {
-								BufferedWriter bw = (BufferedWriter) client.get(i);
+								BufferedWriter bw = (BufferedWriter) client
+										.get(i);
 								bw.write(message);
 								bw.write("\r\n");
 								bw.flush();
