@@ -43,12 +43,14 @@ public class App extends Application {
 
 	public void setApplicationIcon(Stage primaryStage) {
 		try {
-			// image attribution "Icon made by Pixel perfect from www.flaticon.com"
+			// image attribution "Icon made by Pixel perfect from
+			// www.flaticon.com"
 			URL url_icon = new File(Define.path_app_icn).toURI().toURL();
 			Image image = new Image(url_icon.toExternalForm());
 			primaryStage.getIcons().add(image);
 		} catch (Exception e) {
-			Logger.getLogger(App.class.getSimpleName()).log(Level.SEVERE, " setApplicationIcon ::" + e.getMessage());
+			Logger.getLogger(App.class.getSimpleName()).log(Level.SEVERE,
+					" setApplicationIcon ::" + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -63,16 +65,17 @@ public class App extends Application {
 		super.stop();
 	}
 
-//    @Override
-//    public void start(Stage stage) {
-//        String javaVersion = SystemInfo.javaVersion();
-//        String javafxVersion = SystemInfo.javafxVersion();
-//
-//        Label label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-//        Scene scene = new Scene(new StackPane(label), 640, 480);
-//        stage.setScene(scene);
-//        stage.show();
-//    }
-//
+	// @Override
+	// public void start(Stage stage) {
+	// String javaVersion = SystemInfo.javaVersion();
+	// String javafxVersion = SystemInfo.javafxVersion();
+	//
+	// Label label = new Label("Hello, JavaFX " + javafxVersion + ", running on
+	// Java " + javaVersion + ".");
+	// Scene scene = new Scene(new StackPane(label), 640, 480);
+	// stage.setScene(scene);
+	// stage.show();
+	// }
+	//
 
 }

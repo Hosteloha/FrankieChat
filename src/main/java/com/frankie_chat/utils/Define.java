@@ -16,7 +16,8 @@ public class Define {
 	/**
 	 * Logical strings
 	 */
-	public static final String javaVersion = SystemInfo.javaVersion();
-	public static final String javafxVersion = SystemInfo.javafxVersion();
-	public static final String app_info = ("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
+	public static final String javaVersion = AppUtils.javaVersion();
+	public static final String javafxVersion = AppUtils.javafxVersion();
+	public static final String app_info = ("Hello, JavaFX " + javafxVersion
+			+ ", running on Java " + javaVersion + ".");
 }
