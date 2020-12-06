@@ -9,11 +9,14 @@ import com.frankie_chat.controller.MainController;
 import com.frankie_chat.utils.Define;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * JavaFX App
@@ -29,7 +32,8 @@ public class App extends Application {
 			URL url_css = new File(Define.path_css).toURI().toURL();
 			scene.getStylesheets().add(url_css.toExternalForm());
 			setApplicationIcon(primaryStage);
-			primaryStage.setTitle(Define.str_title);
+			primaryStage.setOnCloseRequest(windowEventHandler);
+			primaryStage.setTitle(Define.str_title + " v1.2");
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (Exception e) {
@@ -57,14 +61,30 @@ public class App extends Application {
 
 	@Override
 	public void stop() throws Exception {
-		System.out.println("Application close");
+		super.stop();
+		System.out.println("Application stoped, closing resources");
 		MainController mController = MainController.getmController();
 		if (mController != null) {
 			mController.closeResource();
 		}
-		super.stop();
+		// To stop socket-threads if running any
+		exitPlatformSystem();
 	}
 
+	EventHandler<WindowEvent> windowEventHandler = new EventHandler<WindowEvent>() {
+		@Override
+		public void handle(WindowEvent event) {
+			System.out.println("Handling stage window handler");
+			// DONOTEXIT Platform here!
+			// Handle individual stage closing resources.
+			// After this >> ON_STOP application called, there! platform exit!!
+		}
+	};
+
+	private void exitPlatformSystem() {
+		Platform.exit();
+		System.exit(0);
+	}
 	// @Override
 	// public void start(Stage stage) {
 	// String javaVersion = SystemInfo.javaVersion();

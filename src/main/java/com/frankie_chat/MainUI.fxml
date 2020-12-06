@@ -68,10 +68,13 @@
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="mitem_enterkey_send" mnemonicParsing="false" text="Enter  key to send" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="mitem_clear_chat" mnemonicParsing="false" text="Clear chat window" />
                   <MenuItem fx:id="mitem_copy_chat" mnemonicParsing="false" text="Copy chat" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <RadioMenuItem fx:id="mitem_enterkey_send" mnemonicParsing="false" text="Shift+Enter  key to send" />
+                  <MenuItem fx:id="mitem_clearlog" mnemonicParsing="false" text="Clear log window" />
+                  <MenuItem fx:id="mitem_copylog" mnemonicParsing="false" text="Copy log" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="View">
@@ -93,7 +96,7 @@
                     <items>
                         <SplitPane dividerPositions="0.29797979797979796">
                           <items>
-                              <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="690.0" style="-fx-border-color: lightgray;">
+                              <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="690.0" style="-fx-border-color: lightgray;" SplitPane.resizableWithParent="false">
                                  <children>
                                     <TabPane prefHeight="357.0" prefWidth="386.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <tabs>
@@ -106,13 +109,26 @@
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
-                                                          <RowConstraints maxHeight="-Infinity" minHeight="250.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints minHeight="250.0" prefHeight="250.0" vgrow="SOMETIMES" />
                                                             <RowConstraints maxHeight="-Infinity" minHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                          <children>
-                                                            <ListView fx:id="listview_chatitems" prefHeight="250.0" prefWidth="664.0" style="-fx-control-inner-background-alt: -fx-control-inner-background;" />
-                                                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="2">
+                                                            <ListView fx:id="listview_chatitems" prefHeight="250.0" prefWidth="664.0" style="-fx-control-inner-background-alt: -fx-control-inner-background;" GridPane.vgrow="ALWAYS" />
+                                                            <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                                                               <children>
+                                                                  <TextArea fx:id="txtarea_clientmessageinput" prefHeight="200.0" prefWidth="600.0" promptText="Enter message" HBox.hgrow="ALWAYS" />
+                                                                  <Button fx:id="btn_sendmsg" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="200.0" prefWidth="100.0" text="Send" textAlignment="RIGHT">
+                                                                     <HBox.margin>
+                                                                        <Insets />
+                                                                     </HBox.margin>
+                                                                     <tooltip>
+                                                                        <Tooltip text="Enable Enter to send in Chat Settings" />
+                                                                     </tooltip>
+                                                                  </Button>
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="2" GridPane.vgrow="SOMETIMES">
                                                                <children>
                                                                   <MenuButton mnemonicParsing="false" text="Chat Settings">
                                                                     <items>
@@ -122,46 +138,41 @@
                                                                            </content>
                                                                         </CustomMenuItem>
                                                                         <SeparatorMenuItem mnemonicParsing="false" />
+                                                                        <RadioMenuItem fx:id="mitem_enterkey_send_quick" mnemonicParsing="false" text="Enter  key to send" />
+                                                                        <SeparatorMenuItem mnemonicParsing="false" />
                                                                       <MenuItem fx:id="mitem_clear_chat_quick" mnemonicParsing="false" text="Clear chat window" />
                                                                       <MenuItem fx:id="mitem_copy_chat_quick" mnemonicParsing="false" text="Copy chat" />
                                                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                                                        <RadioMenuItem fx:id="mitem_enterkey_send_quick" mnemonicParsing="false" text="Shift+Enter  key to send" />
+                                                                        <MenuItem fx:id="mitem_clearlog_quick" mnemonicParsing="false" text="Clear log window" />
+                                                                        <MenuItem fx:id="mitem_copylog_quick" mnemonicParsing="false" text="Copy log" />
                                                                     </items>
                                                                   </MenuButton>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
                                                                   <Button fx:id="btn_connect" mnemonicParsing="false" text="Connect">
                                                                      <tooltip>
                                                                         <Tooltip text="Enter the ip address and port number to connect to meeting" />
-                                                                     </tooltip></Button>
+                                                                     </tooltip>
+                                                                  </Button>
                                                                   <TextField fx:id="txtip_ipaddr" prefHeight="27.0" prefWidth="118.0" promptText="10.126.162.000">
                                                                      <tooltip>
                                                                         <Tooltip text="IP Address" />
-                                                                     </tooltip></TextField>
+                                                                     </tooltip>
+                                                                  </TextField>
                                                                   <TextField fx:id="txtip_port" prefHeight="27.0" prefWidth="81.0" promptText="2003 - port">
                                                                      <tooltip>
                                                                         <Tooltip text="Port Number" />
-                                                                     </tooltip></TextField>
+                                                                     </tooltip>
+                                                                  </TextField>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
                                                                   <Button fx:id="btn_endconn" mnemonicParsing="false" text="End" textFill="#d00000">
                                                                      <tooltip>
                                                                         <Tooltip text="To end the ongoing meeting" />
-                                                                     </tooltip></Button>
+                                                                     </tooltip>
+                                                                  </Button>
                                                                   <Separator orientation="VERTICAL" prefHeight="200.0" />
                                                                   <Button fx:id="btn_hostmeeting" mnemonicParsing="false" text="Host Meeting">
                                                                      <tooltip>
                                                                         <Tooltip text="Enter port number to host the meeting" />
-                                                                     </tooltip></Button>
-                                                               </children>
-                                                            </HBox>
-                                                            <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="1">
-                                                               <children>
-                                                                  <TextArea fx:id="txtarea_clientmessageinput" maxWidth="600.0" prefHeight="200.0" prefWidth="600.0" promptText="Enter message" />
-                                                                  <Button fx:id="btn_sendmsg" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="200.0" prefWidth="100.0" text="Send" textAlignment="RIGHT">
-                                                                     <HBox.margin>
-                                                                        <Insets />
-                                                                     </HBox.margin>
-                                                                     <tooltip>
-                                                                        <Tooltip text="Enable Shift + Enter to send in Chat Settings" />
                                                                      </tooltip>
                                                                   </Button>
                                                                </children>
@@ -179,15 +190,15 @@
                                     </TabPane>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="200.0" style="-fx-border-color: lightgray;" SplitPane.resizableWithParent="false">
+                              <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="400.0" prefWidth="307.0" style="-fx-border-color: lightgray;" SplitPane.resizableWithParent="false">
                                  <children>
                                     <TabPane prefHeight="357.0" prefWidth="307.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <tabs>
-                                        <Tab fx:id="tab_notes" text="Notes">
+                                        <Tab fx:id="tab_notes" text="Meeting Notes">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
-                                                      <ScrollPane prefHeight="326.0" prefWidth="293.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="326.0" prefWidth="293.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <content>
                                                             <GridPane alignment="CENTER" hgap="8.0" minWidth="-Infinity" prefWidth="290.0" vgap="8.0">
                                                               <columnConstraints>
@@ -205,7 +216,7 @@
                                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                               </rowConstraints>
                                                                <children>
-                                                                  <Button fx:id="btn_copynotes" mnemonicParsing="false" text="Copy" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                                  <Button fx:id="btn_copynotes" mnemonicParsing="false" text="Copy list" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                                                                      <GridPane.margin>
                                                                         <Insets top="5.0" />
                                                                      </GridPane.margin>
@@ -219,7 +230,7 @@
                                                                   <TextField fx:id="txtFld_task4" GridPane.rowIndex="4" />
                                                                   <TextField fx:id="txtFld_task5" GridPane.rowIndex="5" />
                                                                   <TextField fx:id="txtFld_task6" GridPane.rowIndex="6" />
-                                                                  <TextField fx:id="txtFld_task9" GridPane.rowIndex="7" />
+                                                                  <TextField fx:id="txtFld_task7" GridPane.rowIndex="7" />
                                                                </children>
                                                                <padding>
                                                                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

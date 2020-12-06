@@ -41,6 +41,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -66,7 +67,8 @@ public class MainController implements Initializable {
 			mitem_host, mitem_shortcuts, mitem_about, mitem_end,
 			mitem_clear_chat, mitem_copy_chat, mitem_clear_chat_quick,
 			mitem_copy_chat_quick, mitem_view_compact, mitem_view_maximize,
-			mitem_view_showlog, mitem_view_shownotes;
+			mitem_view_showlog, mitem_view_shownotes, mitem_clearlog,
+			mitem_copylog, mitem_clearlog_quick, mitem_copylog_quick;
 
 	@FXML
 	private TabPane tabpane_main;
@@ -83,7 +85,7 @@ public class MainController implements Initializable {
 
 	@FXML
 	private TextField txtFld_task0, txtFld_task1, txtFld_task2, txtFld_task3,
-			txtFld_task4, txtFld_task5, txtFld_task6, txtFld_task9,
+			txtFld_task4, txtFld_task5, txtFld_task6, txtFld_task7,
 			txtip_ipaddr, txtip_port, mitem_txFld_usrname,
 			mitem_txFld_usrname_quick;
 
@@ -97,7 +99,9 @@ public class MainController implements Initializable {
 	private RadioMenuItem mitem_enterkey_send, mitem_enterkey_send_quick;
 
 	@FXML
-	private ListView listview_chatitems;
+	private ListView<HBox> listview_chatitems;
+
+	private TextField[] txtFieldArr_MeetingNotes = null;
 
 	private static MainController mController = null;
 
@@ -110,6 +114,11 @@ public class MainController implements Initializable {
 		mController = this;
 		recordAppLog("MainController :: initialized", Level.INFO);
 		recordAppLog(Define.app_info, Level.INFO);
+		// Initializing variables
+		txtFieldArr_MeetingNotes = new TextField[]{txtFld_task0, txtFld_task1,
+				txtFld_task2, txtFld_task3, txtFld_task4, txtFld_task5,
+				txtFld_task6, txtFld_task7};
+
 		initListeners();
 
 		// Creating default name //TODO Make it editable
@@ -118,7 +127,7 @@ public class MainController implements Initializable {
 		mitem_txFld_usrname.setDisable(true);
 		mitem_txFld_usrname_quick.setText(userName);
 		mitem_txFld_usrname_quick.setDisable(true);
-		recordAppLog("Deafult user name created as : " + userName, Level.INFO);
+		recordAppLog("Default user name created as : " + userName, Level.INFO);
 	}
 
 	public void recordAppLog(String appLog, Level logLevel) {
@@ -156,16 +165,21 @@ public class MainController implements Initializable {
 		mitem_host.setOnAction(mEventHandler);
 		mitem_connect.setOnAction(mEventHandler);
 		mitem_end.setOnAction(mEventHandler);
-		txtarea_clientmessageinput
-				.setOnKeyPressed(new EventHandler<KeyEvent>() {
-					@Override
-					public void handle(KeyEvent event) {
-						if (event.getCode().equals(KeyCode.ENTER)
-								&& event.isShiftDown()) {
-							btn_sendmsg.fire();
-						}
-					}
-				});
+		mitem_enterkey_send.setOnAction(mEventHandler);
+		mitem_enterkey_send_quick.setOnAction(mEventHandler);
+		// Clear the windows
+		mitem_clear_chat.setOnAction(mEventHandler);
+		mitem_clear_chat_quick.setOnAction(mEventHandler);
+		mitem_clearlog.setOnAction(mEventHandler);
+		mitem_clearlog_quick.setOnAction(mEventHandler);
+		// Copy content to clipboard
+		mitem_copy_chat.setOnAction(mEventHandler);
+		mitem_copy_chat_quick.setOnAction(mEventHandler);
+		mitem_copylog.setOnAction(mEventHandler);
+		mitem_copylog_quick.setOnAction(mEventHandler);
+		btn_copynotes.setOnAction(mEventHandler);
+		// KeyEvent define
+		keyEventListeners();
 		// listview_chatitems.setMouseTransparent(true);
 		// listview_chatitems.setFocusTraversable(false);
 		listview_chatitems.getItems()
@@ -175,6 +189,42 @@ public class MainController implements Initializable {
 				}));
 	}
 
+	private void setEnterKeyOption(boolean isEnabled) {
+		mitem_enterkey_send.setSelected(isEnabled);
+		mitem_enterkey_send_quick.setSelected(isEnabled);
+		AppUtils.setEnterKeyEnabled(isEnabled);
+	}
+
+	private void keyEventListeners() {
+		// Checking enter key state.
+		setEnterKeyOption(AppUtils.isEnterKeyEnabled());
+		// Altering entering, shift+Enter, ALt+enter
+		txtarea_clientmessageinput
+				.setOnKeyPressed(new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent event) {
+						if ((event.getCode().equals(KeyCode.ENTER)
+								&& event.isShiftDown())
+								|| (event.getCode().equals(KeyCode.ENTER)
+										&& event.isAltDown())) {
+							String new_line = System.lineSeparator();
+							txtarea_clientmessageinput.appendText(new_line);
+							// btn_sendmsg.fire();
+						}
+
+						if (event.getCode().equals(KeyCode.ENTER)
+								&& !(event.isShiftDown()
+										|| event.isAltDown())) {
+							if (AppUtils.isEnterKeyEnabled()) {
+								btn_sendmsg.fire();
+								txtarea_clientmessageinput.setText("");
+								event.consume();
+							}
+						}
+					}
+				});
+
+	}
 	private UserX mUser = null;
 	private Server mServer = null;
 	private Thread mClientThread = null;
@@ -192,7 +242,88 @@ public class MainController implements Initializable {
 			if (event.getSource() == mitem_clear_chat
 					|| event.getSource() == mitem_clear_chat_quick) {
 				System.out.println("btn_clearmsgs clicked");
-				// TODO to remove messages from scroll pane
+				listview_chatitems.getItems().clear();
+			}
+			/**
+			 * BTN_CLEAR MESSAGE : to clear the messages off the chat window
+			 */
+			if (event.getSource() == mitem_clearlog
+					|| event.getSource() == mitem_clearlog_quick) {
+				System.out.println("btn_clearlogs clicked");
+				txtFlow_AppLog.getChildren().clear();
+			}
+			/**
+			 * BTN_COPY NOTES : to copy meeting notes in a point wise manner
+			 */
+			if (event.getSource() == btn_copynotes) {
+				System.out.println("btn_copy notes clicked");
+				StringBuilder meetingNotesContent = new StringBuilder();
+				int noteIndex = 1;
+				meetingNotesContent.append(
+						"- Meeting Notes : " + AppUtils.getCurrentTimeStamp()
+								+ " -" + System.lineSeparator());
+				for (int i = 0; i < txtFieldArr_MeetingNotes.length; i++) {
+					if (txtFieldArr_MeetingNotes[i] != null) {
+						String meeting_note = txtFieldArr_MeetingNotes[i]
+								.getText();
+
+						if (meeting_note != null && meeting_note.length() > 0) {
+							meeting_note = meeting_note.trim();
+							meetingNotesContent.append(noteIndex + ". "
+									+ meeting_note + System.lineSeparator());
+							noteIndex = noteIndex + 1;
+						}
+					}
+				}
+				AppUtils.setClipBoardContent(meetingNotesContent.toString());
+				recordAppLog(meetingNotesContent.toString(), Level.INFO);
+				recordAppLog("Meeting notes copied to your clipboard !",
+						Level.SEVERE);
+			}
+			/**
+			 * BTN_COPY LOG : to clear the messages off the chat window
+			 */
+			if (event.getSource() == mitem_copylog
+					|| event.getSource() == mitem_copylog_quick) {
+				System.out.println("btn_copy logs clicked");
+				StringBuilder logContent = new StringBuilder();
+				int textFlowSize = txtFlow_AppLog.getChildren().size();
+				logContent.append(
+						"- Log Content : " + AppUtils.getCurrentTimeStamp()
+								+ " -" + System.lineSeparator());
+				for (int i = 0; i < textFlowSize; i++) {
+					Node node = txtFlow_AppLog.getChildren().get(i);
+					if (node instanceof Text) {
+						logContent.append(((Text) node).getText());
+					}
+				}
+				AppUtils.setClipBoardContent(logContent.toString());
+				recordAppLog("Log copied to your clipboard !", Level.SEVERE);
+			}
+			/**
+			 * BTN_COPY CHAT : to clear the messages off the chat window
+			 */
+			if (event.getSource() == mitem_copy_chat
+					|| event.getSource() == mitem_copy_chat_quick) {
+				System.out.println("btn_copy chats clicked");
+				StringBuilder chatContent = new StringBuilder();
+				int listViewSize = listview_chatitems.getItems().size();
+				chatContent.append(
+						"- Chat Content : " + AppUtils.getCurrentTimeStamp()
+								+ " -" + System.lineSeparator());
+
+				for (int i = 0; i < listViewSize; i++) {
+					Node node_hbox = listview_chatitems.getItems().get(i);
+					if (node_hbox instanceof HBox) {
+						Bubble node_bubble = (Bubble) ((HBox) node_hbox)
+								.getChildrenUnmodifiable().get(0);
+						chatContent.append(" MSG > " + node_bubble.getMetaText()
+								+ " :  " + node_bubble.getMainText()
+								+ System.lineSeparator());
+					}
+				}
+				AppUtils.setClipBoardContent(chatContent.toString());
+				recordAppLog("Chat copied to your clipboard !", Level.SEVERE);
 			}
 			/**
 			 * BTN_END CONNECTION : to end the chat communication
@@ -336,6 +467,15 @@ public class MainController implements Initializable {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+			/**
+			 * MENU ITEM : ENTER KEY SEND
+			 */
+			if (event.getSource() == mitem_enterkey_send
+					|| event.getSource() == mitem_enterkey_send_quick) {
+				boolean isSelected = ((RadioMenuItem) event.getSource())
+						.isSelected();
+				setEnterKeyOption(isSelected);
 			}
 		}
 

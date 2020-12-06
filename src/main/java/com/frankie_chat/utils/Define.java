@@ -20,4 +20,8 @@ public class Define {
 	public static final String javafxVersion = AppUtils.javafxVersion();
 	public static final String app_info = ("Hello, JavaFX " + javafxVersion
 			+ ", running on Java " + javaVersion + ".");
+	/**
+	 * Application default value
+	 */
+	public static final boolean defaultEnterKeyEnable = true;
 }
