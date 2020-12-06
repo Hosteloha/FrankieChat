@@ -20,10 +20,14 @@ import javafx.scene.text.Text;
  *          2019
  *
  *          Requirements: JavaFX
+ * @version 2
  *
+ *          Added methods to access main and meta text 06/12/2020
  */
 public class Bubble extends Group {
 
+	private String mainText = null;
+	private String metaText = null;
 	private int p = 8;
 	private int s = 12;
 	private int pm = 4;
@@ -108,6 +112,7 @@ public class Bubble extends Group {
 	private void init(int x, int y, String text, String meta) {
 		// temp for text
 		Text temp = new Text(text);
+		setMainText(text);
 		temp.setFont(textFont);
 		int textW = (int) temp.getLayoutBounds().getWidth();
 		int textH = (int) temp.getLayoutBounds().getHeight();
@@ -117,6 +122,7 @@ public class Bubble extends Group {
 
 		// tmp for meta
 		Text tmp = new Text(meta);
+		setMetaText(meta);
 		tmp.setFont(metaFont);
 		int metaW = (int) tmp.getLayoutBounds().getWidth();
 		int metaH = (int) tmp.getLayoutBounds().getHeight();
@@ -151,6 +157,22 @@ public class Bubble extends Group {
 		r.setFill(bubbleColor);
 
 		getChildren().addAll(r, l, m);
+	}
+
+	public String getMainText() {
+		return mainText;
+	}
+
+	public void setMainText(String mainText) {
+		this.mainText = mainText;
+	}
+
+	public String getMetaText() {
+		return metaText;
+	}
+
+	public void setMetaText(String metaText) {
+		this.metaText = metaText;
 	}
 
 	/**
