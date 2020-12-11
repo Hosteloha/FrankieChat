@@ -64,7 +64,10 @@
               <items>
                   <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
                      <content>
-                        <TextField fx:id="mitem_txFld_usrname" promptText="user name optional" />
+                        <TextField fx:id="mitem_txFld_usrname" promptText="user name optional">
+                           <tooltip>
+                              <Tooltip contentDisplay="CENTER" text="Press Enter  key to save" />
+                           </tooltip></TextField>
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -134,7 +137,10 @@
                                                                     <items>
                                                                         <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
                                                                            <content>
-                                                                              <TextField fx:id="mitem_txFld_usrname_quick" promptText="user name optional" />
+                                                                              <TextField fx:id="mitem_txFld_usrname_quick" promptText="user name optional">
+                                                                                 <tooltip>
+                                                                                    <Tooltip contentDisplay="CENTER" text="Press Enter  key to save" />
+                                                                                 </tooltip></TextField>
                                                                            </content>
                                                                         </CustomMenuItem>
                                                                         <SeparatorMenuItem mnemonicParsing="false" />
