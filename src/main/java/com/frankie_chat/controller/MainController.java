@@ -20,6 +20,8 @@ import com.frankie_chat.utils.AppUtils;
 import com.frankie_chat.utils.Define;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,6 +35,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
@@ -41,6 +44,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -101,6 +105,7 @@ public class MainController implements Initializable {
 	@FXML
 	private ListView<HBox> listview_chatitems;
 
+
 	private TextField[] txtFieldArr_MeetingNotes = null;
 
 	private static MainController mController = null;
@@ -124,9 +129,9 @@ public class MainController implements Initializable {
 		// Creating default name //TODO Make it editable
 		String userName = AppUtils.initializeDefaultUserName();
 		mitem_txFld_usrname.setText(userName);
-		mitem_txFld_usrname.setDisable(true);
+		// mitem_txFld_usrname.setDisable(true);
 		mitem_txFld_usrname_quick.setText(userName);
-		mitem_txFld_usrname_quick.setDisable(true);
+		// mitem_txFld_usrname_quick.setDisable(true);
 		recordAppLog("Default user name created as : " + userName, Level.INFO);
 	}
 
@@ -195,34 +200,62 @@ public class MainController implements Initializable {
 		AppUtils.setEnterKeyEnabled(isEnabled);
 	}
 
+	EventHandler<KeyEvent> mKeyEventHandler = new EventHandler<KeyEvent>() {
+
+		@Override
+		public void handle(KeyEvent event) {
+			if (event.getSource() == txtarea_clientmessageinput) {
+				if ((event.getCode().equals(KeyCode.ENTER)
+						&& event.isShiftDown())
+						|| (event.getCode().equals(KeyCode.ENTER)
+								&& event.isAltDown())) {
+					String new_line = System.lineSeparator();
+					txtarea_clientmessageinput.appendText(new_line);
+					// btn_sendmsg.fire();
+				}
+
+				if (event.getCode().equals(KeyCode.ENTER)
+						&& !(event.isShiftDown() || event.isAltDown())) {
+					if (AppUtils.isEnterKeyEnabled()) {
+						btn_sendmsg.fire();
+						txtarea_clientmessageinput.setText("");
+						event.consume();
+					}
+				}
+			}
+			if (event.getSource() == mitem_txFld_usrname_quick
+					|| event.getSource() == mitem_txFld_usrname) {
+				if (event.getCode().equals(KeyCode.ENTER)) {
+					String edited_username = mitem_txFld_usrname_quick
+							.getText();
+					Alert alert = new Alert(AlertType.CONFIRMATION,
+							"Your new user name would be set to "
+									+ edited_username + " ?",
+							ButtonType.APPLY, ButtonType.CANCEL);
+					alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+					alert.showAndWait();
+					if (alert.getResult() == ButtonType.APPLY) {
+						AppUtils.setUSERNAME(edited_username);
+						mitem_txFld_usrname_quick.setText(edited_username);
+						mitem_txFld_usrname.setText(edited_username);
+					} else {
+						String old_username = AppUtils.getUSERNAME();
+						mitem_txFld_usrname_quick.setText(old_username);
+						mitem_txFld_usrname.setText(old_username);
+					}
+				}
+			}
+
+		}
+	};
 	private void keyEventListeners() {
 		// Checking enter key state.
 		setEnterKeyOption(AppUtils.isEnterKeyEnabled());
 		// Altering entering, shift+Enter, ALt+enter
-		txtarea_clientmessageinput
-				.setOnKeyPressed(new EventHandler<KeyEvent>() {
-					@Override
-					public void handle(KeyEvent event) {
-						if ((event.getCode().equals(KeyCode.ENTER)
-								&& event.isShiftDown())
-								|| (event.getCode().equals(KeyCode.ENTER)
-										&& event.isAltDown())) {
-							String new_line = System.lineSeparator();
-							txtarea_clientmessageinput.appendText(new_line);
-							// btn_sendmsg.fire();
-						}
-
-						if (event.getCode().equals(KeyCode.ENTER)
-								&& !(event.isShiftDown()
-										|| event.isAltDown())) {
-							if (AppUtils.isEnterKeyEnabled()) {
-								btn_sendmsg.fire();
-								txtarea_clientmessageinput.setText("");
-								event.consume();
-							}
-						}
-					}
-				});
+		txtarea_clientmessageinput.setOnKeyPressed(mKeyEventHandler);
+		// Username editing option
+		mitem_txFld_usrname.setOnKeyPressed(mKeyEventHandler);
+		mitem_txFld_usrname_quick.setOnKeyPressed(mKeyEventHandler);
 
 	}
 	private UserX mUser = null;

@@ -33,7 +33,7 @@ public class App extends Application {
 			scene.getStylesheets().add(url_css.toExternalForm());
 			setApplicationIcon(primaryStage);
 			primaryStage.setOnCloseRequest(windowEventHandler);
-			primaryStage.setTitle(Define.str_title + " v1.2");
+			primaryStage.setTitle(Define.str_title + " v1.3");
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (Exception e) {
